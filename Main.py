@@ -2,6 +2,8 @@ from CommandHandler import *
 from Config import *
 from DiscordBot import *
 
-config = Config()
-disordBot = DiscordBot(config)
+if __name__ == "__main__":
+
+    config = Config()
+    disordBot = DiscordBot(config)
 

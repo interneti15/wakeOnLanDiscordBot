@@ -3,11 +3,14 @@ import platform
 import asyncio
 import psutil
 import time
+
 from Config import *
 from WakeOnLan import *
 
 async def commandHandler(command: str, config:Config) -> str:
     command = command.strip().lower()
+    if command == "":
+        return "Unknown command. Use -h to see available commands."
 
     if command == "status":
         return await system_status()
@@ -95,4 +98,5 @@ async def main():
     print(string)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    pass
+    #asyncio.run(main())
