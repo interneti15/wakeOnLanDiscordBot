@@ -3,6 +3,7 @@ import platform
 import asyncio
 import psutil
 import time
+import subprocess
 
 from Config import *
 from WakeOnLan import *
@@ -26,11 +27,14 @@ async def commandHandler(command: str, config:Config) -> str:
         if system_platform == 'windows':
             os.system('shutdown /s /t 1')  # Windows shutdown command
         elif system_platform == 'linux' or system_platform == 'darwin':
-            os.system('shutdown -h now')  # Linux/Mac shutdown command
+            os.system('shutdown now')  # Linux/Mac shutdown command
         return "System is shutting down..."
 
     elif command == "-h":
         return await help()
+
+    elif command == "myip":
+        return await get_public_ip()
 
     else:
         return "Unknown command. Use -h to see available commands."
@@ -42,7 +46,21 @@ async def help():
             "wol - Send a Wake-on-LAN magic packet\n"
             "disk - Show disk usage details\n"
             "shutdown - Shutdown the system\n"
+            "myip - show current public ipv4\n"
+            "upnp-refresh - restart vital upnp tunels (disabled) \n"
             "-h - Show this help message")
+
+async def get_public_ip():
+    # Run the curl command asynchronously and capture the output
+    process = await asyncio.create_subprocess_shell(
+        'curl ifconfig.me',
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    
+    # Decode and return the stdout as a string
+    return stdout.decode().strip()
 
 
 async def disk_status():
@@ -94,7 +112,7 @@ async def system_status():
 
 
 async def main():
-    string = await commandHandler("status", None)
+    string = await commandHandler("myip", None)
     print(string)
 
 if __name__ == "__main__":
